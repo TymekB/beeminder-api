@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {BeeminderService} from "../../services/beeminder/beeminder.service";
 
 @Component({
     selector: 'app-goal',
@@ -9,12 +10,13 @@ export class GoalComponent implements OnInit {
 
     @Input() name = '';
 
-    constructor() {
-
+    constructor(private beeminderService: BeeminderService) {
     }
 
     ngOnInit(): void {
-
+        this.beeminderService.fetchGoal(this.name).subscribe(response => {
+            console.log(response);
+        });
     }
 
 }
