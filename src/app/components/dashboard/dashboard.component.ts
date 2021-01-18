@@ -13,10 +13,18 @@ export class DashboardComponent implements OnInit {
     constructor(private beeminderService: BeeminderService) {
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.beeminderService.fetchUser().subscribe(response => {
             this.goals = response.goals
         });
+
+        // const response = await this.beeminderService.fetchUser().toPromise();
+        // this.goals = response.goals;
+
+
+
+
     }
+
 
 }

@@ -1,1 +1,3 @@
-<p *ngFor="let goal of goals">{{goal}}</p>
+<p *ngFor="let goal of goals">
+    <app-goal [name]="goal"></app-goal>
+</p>
