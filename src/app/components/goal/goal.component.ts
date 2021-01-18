@@ -9,13 +9,14 @@ import {BeeminderService} from "../../services/beeminder/beeminder.service";
 export class GoalComponent implements OnInit {
 
     @Input() name = '';
+    datapoints: any;
 
     constructor(private beeminderService: BeeminderService) {
     }
 
     ngOnInit(): void {
         this.beeminderService.fetchGoal(this.name).subscribe(response => {
-            console.log(response);
+            this.datapoints = response;
         });
     }
 

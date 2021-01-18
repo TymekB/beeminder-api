@@ -15,12 +15,20 @@ export class BeeminderService {
     fetchGoal(goal: string) {
         return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}/datapoints.json?auth_token=${environment.beeminderAuthToken}`).pipe(map(goals => {
 
-            return goals.map((el) => {
+            let goalsFormatted = goals.map((goal) => {
                 return {
-                    date: el.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0],
-                    value: el.value
+                    date: goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0],
+                    value: goal.value
                 }
             });
+
+            // makes datapoints array unique and sums the values
+
+            return goalsFormatted.map((goal) => {
+                let reduced = goalsFormatted.filter(v => v.date == goal.date).map(v => v.value).reduce((total, amount) => total + amount);
+
+                return {date: goal.date, value: reduced};
+            }).filter((value, index) => goalsFormatted.map(v => v.date).indexOf(value.date) == index);
         }));
     }
 

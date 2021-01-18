@@ -1,1 +1,4 @@
 <p>{{name}}</p>
+<ol>
+    <li *ngFor="let datapoint of datapoints">{{datapoint.date}} - {{datapoint.value}}</li>
+</ol>
