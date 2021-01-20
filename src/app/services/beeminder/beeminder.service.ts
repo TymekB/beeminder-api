@@ -17,11 +17,11 @@ export class BeeminderService {
     fetchGoal(goal: string) {
         return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}/datapoints.json?auth_token=${environment.beeminderAuthToken}`).pipe(map(goals => {
 
-            let goalsFormatted = goals.map((goal: BeeminderGoalInterface) => {
+            if (!(goals instanceof Array)) return [];
 
-                let formattedDate = goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'));
+            let goalsFormatted = goals.map((goal: BeeminderGoalInterface) => {
                 return {
-                    date: formattedDate ? formattedDate : '',
+                    date: goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0],
                     value: goal.value
                 }
             });
@@ -31,12 +31,11 @@ export class BeeminderService {
             return goalsFormatted.map((goal: GoalInterface) => {
                 let reduced = goalsFormatted.filter((v: GoalInterface) => v.date == goal.date)
                     .map((v: GoalInterface) => v.value)
-                    .reduce((total: number, amount: number) => total + amount);
+                    .reduce((total, amount) => total + amount);
 
                 return {date: goal.date, value: reduced};
-
-            }).filter((value: GoalInterface, index: number) => goalsFormatted
-                .map((v: GoalInterface) => v.date)
+            }).filter((value: GoalInterface, index) => goalsFormatted
+                .map((v: GoalInterface)=> v.date)
                 .indexOf(value.date) == index);
         }));
     }
