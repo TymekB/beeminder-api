@@ -1,5 +1,6 @@
-<p>{{name}}</p>
+<p>{{name}} ({{datapoints && countStreak(datapoints)}})</p>
 <ol>
     <li *ngFor="let datapoint of datapoints" [style]="datapoint.value >= dailyMin ? 'color: green' : 'color: red'">{{datapoint.date}} - {{datapoint.value}}</li>
 </ol>
 <b>Min: {{dailyMin}}</b>
+<p>{{streak}}</p>

@@ -69,7 +69,7 @@ export class BeeminderService {
                 .map((v: GoalInterface) => v.date)
                 .indexOf(value.date) == index);
 
-            // sort datapoints from oldest to latest
+            // sorts datapoints from oldest to latest
 
             return unique.sort((a: GoalInterface, b: GoalInterface) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
