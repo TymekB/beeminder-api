@@ -1,4 +1,5 @@
 <p>{{name}}</p>
 <ol>
-    <li *ngFor="let datapoint of datapoints">{{datapoint.date}} - {{datapoint.value}}</li>
+    <li *ngFor="let datapoint of datapoints" [style]="datapoint.value >= dailyMin ? 'color: green' : 'color: red'">{{datapoint.date}} - {{datapoint.value}}</li>
 </ol>
+<b>Min: {{dailyMin}}</b>

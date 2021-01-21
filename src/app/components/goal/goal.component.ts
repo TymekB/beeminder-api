@@ -10,13 +10,19 @@ export class GoalComponent implements OnInit {
 
     @Input() name = '';
     datapoints: any;
+    dailyMin: number;
 
     constructor(private beeminderService: BeeminderService) {
+
     }
 
     ngOnInit(): void {
-        this.beeminderService.fetchGoal(this.name, "year").subscribe(response => {
+        this.beeminderService.fetchGoalDatapoints(this.name, "week").subscribe(response => {
             this.datapoints = response;
+        });
+
+        this.beeminderService.fetchGoalDailyMin(this.name).subscribe(res => {
+            this.dailyMin = res;
         });
     }
 
