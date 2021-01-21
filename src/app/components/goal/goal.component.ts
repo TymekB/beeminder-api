@@ -17,7 +17,7 @@ export class GoalComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.beeminderService.fetchGoalDatapoints(this.name, "week").subscribe(response => {
+        this.beeminderService.fetchGoalDatapoints(this.name).subscribe(response => {
             this.datapoints = response;
         });
 

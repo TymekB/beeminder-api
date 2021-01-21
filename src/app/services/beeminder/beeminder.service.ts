@@ -16,14 +16,17 @@ export class BeeminderService {
     }
 
     fetchGoalDailyMin(goal: string) {
-        return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}.json?auth_token=${environment.beeminderAuthToken}`).pipe(map((goal: {runits: string, rate: number}) => {
+        return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}.json?auth_token=${environment.beeminderAuthToken}`).pipe(map((goal: { runits: string, rate: number }) => {
 
             let min = goal.rate;
 
-            switch(goal.runits) {
-                case 'w': return min / 7;
-                case 'm': return min / 30;
-                case 'y': return min / 365;
+            switch (goal.runits) {
+                case 'w':
+                    return min / 7;
+                case 'm':
+                    return min / 30;
+                case 'y':
+                    return min / 365;
             }
 
             return min;
@@ -54,15 +57,23 @@ export class BeeminderService {
 
             // makes datapoints array unique and sums the values
 
-            return goalsFormatted.map((goal: GoalInterface) => {
+            const unique = goalsFormatted.map((goal: GoalInterface) => {
+
                 let reduced = goalsFormatted.filter((v: GoalInterface) => v.date == goal.date)
                     .map((v: GoalInterface) => v.value)
                     .reduce((total, amount) => total + amount);
 
                 return {date: goal.date, value: reduced};
+
             }).filter((value: GoalInterface, index) => goalsFormatted
                 .map((v: GoalInterface) => v.date)
                 .indexOf(value.date) == index);
+
+            // sort datapoints from oldest to latest
+
+            return unique.sort((a: GoalInterface, b: GoalInterface) => {
+                return new Date(b.date).getTime() - new Date(a.date).getTime();
+            });
         }));
     }
 
