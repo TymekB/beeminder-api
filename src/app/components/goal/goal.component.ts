@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BeeminderService} from "../../services/beeminder/beeminder.service";
 import * as moment from 'moment';
+import {GoalInterface} from "../../interfaces/GoalInterface";
 
 @Component({
     selector: 'app-goal',
@@ -40,7 +41,7 @@ export class GoalComponent implements OnInit {
     ngOnInit(): void {
         this.beeminderService.fetchGoalDatapoints(this.name).subscribe(response => {
             this.datapoints = response;
-            console.log(this.name + " streak: " + this.countStreak(response));
+            this.streak = this.countStreak(response);
         });
 
         this.beeminderService.fetchGoalDailyMin(this.name).subscribe(res => {
