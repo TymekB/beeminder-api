@@ -19,34 +19,29 @@ export class GoalComponent implements OnInit {
 
     }
 
-    countStreak(datapoints) {
+    countStreak(datapoints, dailyMin) {
+
         let streak = 0;
+        console.log(this.dailyMin);
 
-        if (moment(datapoints[0].date).isSame(new Date(), "day")) {
+        for (let i = 0; i < datapoints.length; i++) {
+            const daysDifference = moment(datapoints[i].date).diff(moment(datapoints[i + 1].date), 'days');
 
-            datapoints.forEach((datapoint, index) => {
+            if (daysDifference > 1 && datapoints[i].value >= dailyMin) {
+                return ++streak;
+            }
 
-                if (index < datapoints.length - 1) {
-
-                    if (moment(datapoint.date).diff(moment(datapoints[index+1].date), 'days')) {
-                        streak++;
-                    }
-                }
-            });
+            streak++;
         }
 
         return streak;
     }
 
-    ngOnInit(): void {
-        this.beeminderService.fetchGoalDatapoints(this.name).subscribe(response => {
-            this.datapoints = response;
-            this.streak = this.countStreak(response);
-        });
+    async ngOnInit(): Promise<void> {
+        this.datapoints = await this.beeminderService.fetchGoalDatapoints(this.name).toPromise();
+        this.dailyMin = await this.beeminderService.fetchGoalDailyMin(this.name).toPromise();
 
-        this.beeminderService.fetchGoalDailyMin(this.name).subscribe(res => {
-            this.dailyMin = res;
-        });
+        this.streak = this.countStreak(this.datapoints, this.dailyMin);
     }
 
 }
