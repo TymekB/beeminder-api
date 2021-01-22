@@ -71,6 +71,10 @@ export class BeeminderService {
 
             // sorts datapoints from oldest to latest
 
+            if(timeframe === 'day') {
+                return unique;
+            }
+
             return unique.sort((a: GoalInterface, b: GoalInterface) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });

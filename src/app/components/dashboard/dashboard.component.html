@@ -1,3 +1,14 @@
-<p *ngFor="let goal of goals">
-    <app-goal [name]="goal"></app-goal>
-</p>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <ol class="list-group">
+                <li class="list-group-item" *ngFor="let goal of goals">
+                    <app-goal [name]="goal"></app-goal>
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+

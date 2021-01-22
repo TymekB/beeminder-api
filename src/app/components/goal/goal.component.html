@@ -1,5 +1,14 @@
-<p>{{name}} ({{streak}})</p>
-<ol>
-    <li *ngFor="let datapoint of datapoints" [style]="datapoint.value >= dailyMin ? 'color: green' : 'color: red'">{{datapoint.date}} - {{datapoint.value}}</li>
-</ol>
-<b>Min: {{dailyMin}}</b>
+<div class="d-flex">
+    <div class="mr-auto p-1">
+        <div class="float-left">
+            <i [class]="todayDatapoints && todayDatapoints[0] >= dailyMin ? 'far fa-lightbulb success mr-3' : 'far fa-lightbulb danger mr-3'"></i>
+            {{name}}
+        </div>
+    </div>
+    <ng-template [ngIf]="streak !== null">
+        <div class="p-1"><img [class]="(streak === 0) ? 'streak-icon no-streak' : 'streak-icon'"
+                              src="https://readwise-assets.s3.amazonaws.com/static/images/new_icons/zap.3a1f249bc92b.svg">
+        </div>
+        <div class="p-1">{{streak}}</div>
+    </ng-template>
+</div>

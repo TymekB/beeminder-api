@@ -12,8 +12,9 @@ export class GoalComponent implements OnInit {
 
     @Input() name = '';
     datapoints: any;
+    todayDatapoints: any;
     dailyMin: number;
-    streak: number;
+    streak: number | null = null;
 
     constructor(private beeminderService: BeeminderService) {
 
@@ -21,15 +22,20 @@ export class GoalComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.datapoints = await this.beeminderService.fetchGoalDatapoints(this.name).toPromise();
+        this.todayDatapoints = await this.beeminderService.fetchGoalDatapoints(this.name, "day").toPromise();
         this.dailyMin = await this.beeminderService.fetchGoalDailyMin(this.name).toPromise();
 
         this.streak = this.countStreak(this.datapoints, this.dailyMin);
+
+        console.log(this.todayDatapoints);
     }
 
     countStreak(datapoints, dailyMin) {
         let streak = 0;
 
-        if(moment().diff(moment(datapoints[0].date), "days") > 1) {
+        // if the difference between latest datapoint is greater than one return 0
+
+        if (typeof datapoints[0] === 'undefined' || moment().diff(moment(datapoints[0].date), "days") > 1 || datapoints.length < 2) {
             return streak;
         }
 

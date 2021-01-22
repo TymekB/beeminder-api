@@ -1,0 +1,13 @@
+@import "../../../styles";
+
+.streak {
+    width: 30px;
+}
+
+.streak-icon {
+    height: 25px;
+}
+
+.no-streak {
+   filter: grayscale(1) brightness(1.15);
+}
