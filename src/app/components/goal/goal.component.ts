@@ -27,7 +27,6 @@ export class GoalComponent implements OnInit {
 
         this.streak = this.countStreak(this.datapoints, this.dailyMin);
 
-        console.log(this.todayDatapoints);
     }
 
     countStreak(datapoints, dailyMin) {
