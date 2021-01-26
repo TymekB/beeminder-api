@@ -42,6 +42,9 @@ export class GoalComponent implements OnInit {
 
         for (let i = 0; i < datapoints.length; i++) {
             const daysDifference = moment(datapoints[i].date).diff(moment(datapoints[i + 1].date), 'days');
+            const isToday = moment(datapoints[i].date).isSame(new Date(), "days");
+
+            if(isToday && daysDifference === 1 && datapoints[i].value < dailyMin) continue;
 
             if (daysDifference > 1 || datapoints[i].value < dailyMin) {
                 datapoints[i].value >= dailyMin ? streak++ : streak;
