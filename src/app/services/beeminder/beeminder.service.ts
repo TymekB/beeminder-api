@@ -2,10 +2,15 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {map} from "rxjs/operators";
-import {BeeminderGoalInterface} from "../../interfaces/BeeminderGoalInterface";
-import {GoalInterface} from "../../interfaces/GoalInterface";
+import {map, switchMap} from "rxjs/operators";
+import {BeeminderDatapointInterface} from "../../interfaces/beeminder-datapoint.interface";
+import {DatapointInterface} from "../../interfaces/datapoint.interface";
 import * as moment from "moment";
+import {GoalInterface} from "../../interfaces/goal-interface";
+import {BeeminderGoalInterface} from "../../interfaces/beeminder-goal.interface";
+import {DatapointModel} from "../../models/datapoint.model";
+import {GoalModel} from "../../models/goal.model";
+import {UserInterface} from "../../interfaces/user.interface";
 
 @Injectable({
     providedIn: 'root'
@@ -15,36 +20,35 @@ export class BeeminderService {
     constructor(private http: HttpClient) {
     }
 
-    fetchGoalDailyMin(goal: string) {
-        return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}.json?auth_token=${environment.beeminderAuthToken}`).pipe(map((goal: { runits: string, rate: number }) => {
+    fetchGoalDailyMin(goal: string): Observable<number> {
+        const url = `${environment.beeminderUrl}/users/me/goals/${goal}.json?auth_token=${environment.beeminderAuthToken}`;
 
-            let min = goal.rate;
+        return this.http.get(url).pipe(map((goal: BeeminderGoalInterface) => {
 
             switch (goal.runits) {
                 case 'w':
-                    return min / 7;
+                    return goal.rate / 7;
                 case 'm':
-                    return min / 30;
+                    return goal.rate / 30;
                 case 'y':
-                    return min / 365;
+                    return goal.rate / 365;
+                default:
+                    return goal.rate
             }
-
-            return min;
         }));
     }
 
-    fetchGoalDatapoints(goal: string, timeframe: string | null = null) {
-        return this.http.get(`${environment.beeminderUrl}/users/me/goals/${goal}/datapoints.json?auth_token=${environment.beeminderAuthToken}`).pipe(map(goals => {
+    fetchGoalDatapoints(goal: string, timeframe: string | null = null): Observable<DatapointInterface[]> {
+        const url = `${environment.beeminderUrl}/users/me/goals/${goal}/datapoints.json?auth_token=${environment.beeminderAuthToken}`;
 
-            if (!(goals instanceof Array)) return [];
+        return this.http.get(url).pipe(map((goals: BeeminderDatapointInterface[]): DatapointModel[] => {
 
-            let goalsFormatted = goals.map((goal: BeeminderGoalInterface) => {
-                // TODO: add goal model
-                return {
-                    date: goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0],
-                    value: goal.value
-                }
-            }).filter((v: GoalInterface) => {
+            let datapointsFormatted = goals.map<DatapointInterface>((goal: BeeminderDatapointInterface) => {
+                const date = goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0];
+
+                return new DatapointModel(date, goal.value);
+
+            }).filter((v: DatapointInterface) => {
                 if (timeframe === 'day' || timeframe === 'month' || timeframe === 'year') {
                     return moment(v.date).isSame(new Date(), timeframe);
                 }
@@ -57,31 +61,41 @@ export class BeeminderService {
 
             // makes datapoints array unique and sums the values
 
-            const unique = goalsFormatted.map((goal: GoalInterface) => {
+            const uniqueDatapoints = datapointsFormatted.map<DatapointInterface>((goal: DatapointInterface) => {
 
-                let reduced = goalsFormatted.filter((v: GoalInterface) => v.date == goal.date)
-                    .map((v: GoalInterface) => v.value)
+                let reduced = datapointsFormatted.filter((v: DatapointInterface) => v.date == goal.date)
+                    .map((v: DatapointInterface) => v.value)
                     .reduce((total, amount) => total + amount);
 
-                return {date: goal.date, value: reduced};
+                return new DatapointModel(goal.date, reduced);
 
-            }).filter((value: GoalInterface, index) => goalsFormatted
-                .map((v: GoalInterface) => v.date)
+            }).filter((value: DatapointInterface, index) => datapointsFormatted
+                .map((v: DatapointInterface) => v.date)
                 .indexOf(value.date) == index);
 
-            // sorts datapoints from oldest to latest
+            // sorts datapoints from latest to oldest
 
-            if(timeframe === 'day') {
-                return unique;
+            if (timeframe === 'day') {
+                return uniqueDatapoints;
             }
 
-            return unique.sort((a: GoalInterface, b: GoalInterface) => {
+            return uniqueDatapoints.sort((a: DatapointInterface, b: DatapointInterface) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
         }));
     }
 
-    fetchUser(): Observable<any> {
-        return this.http.get(environment.beeminderUrl + `/users/me.json?auth_token=${environment.beeminderAuthToken}`);
+    fetchGoal(name, timeframe): Observable<GoalInterface> {
+        return this.fetchGoalDatapoints(name, timeframe).pipe(switchMap((datapoints: any) => {
+            return this.fetchGoalDailyMin(name).pipe(map((dailyMin) => {
+                return new GoalModel(name, datapoints, dailyMin);
+            }));
+        }));
+    }
+
+    fetchUser(): Observable<UserInterface> {
+        const url = environment.beeminderUrl + `/users/me.json?auth_token=${environment.beeminderAuthToken}`;
+
+        return this.http.get<UserInterface>(url);
     }
 }

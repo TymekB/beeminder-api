@@ -1,13 +1,13 @@
 <div class="d-flex">
     <div class="mr-auto p-1">
         <div class="float-left">
-            <i [class]="todayDatapoints && todayDatapoints.length > 0 && todayDatapoints[0].value >= dailyMin ? 'far fa-lightbulb success mr-3' : 'far fa-lightbulb danger mr-3'"></i>
-            {{name}}
+            <i [class]="goal.datapoints.length > 0 && goal.datapoints[0].value >= goal.dailyMin ? 'far fa-lightbulb success mr-3' : 'far fa-lightbulb danger mr-3'"></i>
+            {{goal.name}}
         </div>
     </div>
     <ng-template [ngIf]="streak !== null">
         <div class="p-1 streak"><img [class]="(streak === 0) ? 'streak-icon no-streak' : 'streak-icon'"
-                                     src="https://readwise-assets.s3.amazonaws.com/static/images/new_icons/zap.3a1f249bc92b.svg">
+                                     src="../../../assets/streak-icon.svg" alt="streak">
         </div>
         <div class="p-1 streak">{{streak}}</div>
     </ng-template>

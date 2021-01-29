@@ -1,7 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {BeeminderService} from "../../services/beeminder/beeminder.service";
 import * as moment from 'moment';
-import {GoalInterface} from "../../interfaces/GoalInterface";
+import {GoalInterface} from "../../interfaces/goal-interface";
+import {DatapointInterface} from "../../interfaces/datapoint.interface";
 
 @Component({
     selector: 'app-goal',
@@ -10,26 +11,20 @@ import {GoalInterface} from "../../interfaces/GoalInterface";
 })
 export class GoalComponent implements OnInit {
 
-    @Input() name = '';
-    datapoints: any;
-    todayDatapoints: any;
-    dailyMin: number;
+    @Input() goal: GoalInterface;
     streak: number | null = null;
 
     constructor(private beeminderService: BeeminderService) {
 
     }
 
-    async ngOnInit(): Promise<void> {
-        this.datapoints = await this.beeminderService.fetchGoalDatapoints(this.name).toPromise();
-        this.todayDatapoints = await this.beeminderService.fetchGoalDatapoints(this.name, "day").toPromise();
-        this.dailyMin = await this.beeminderService.fetchGoalDailyMin(this.name).toPromise();
-
-        this.streak = this.countStreak(this.datapoints, this.dailyMin);
-
+    ngOnInit(): void {
+        this.beeminderService.fetchGoalDatapoints(this.goal.name).subscribe((datapoints: DatapointInterface[]) => {
+            this.streak = this.countStreak(datapoints, this.goal.dailyMin);
+        });
     }
 
-    countStreak(datapoints, dailyMin) {
+    countStreak(datapoints: DatapointInterface[], dailyMin: number): number {
         let streak = 0;
 
         // if the difference between latest datapoint is greater than one return 0
@@ -47,7 +42,9 @@ export class GoalComponent implements OnInit {
             if(isToday && daysDifference === 1 && datapoints[i].value < dailyMin) continue;
 
             if (daysDifference > 1 || datapoints[i].value < dailyMin) {
-                datapoints[i].value >= dailyMin ? streak++ : streak;
+
+                if(datapoints[i].value >= dailyMin) streak++;
+
                 break;
             }
 
