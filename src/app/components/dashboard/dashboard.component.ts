@@ -11,17 +11,25 @@ import {UserInterface} from "../../interfaces/user.interface";
 export class DashboardComponent implements OnInit {
 
     goals: GoalInterface[] = [];
+    loading: boolean = false;
 
     constructor(private beeminderService: BeeminderService) {
     }
 
     ngOnInit(): void {
-        this.beeminderService.fetchUser().subscribe((user: UserInterface) => {
-            user.goals.forEach((name) => {
-                this.beeminderService.fetchGoal(name, "day").subscribe((goal: GoalInterface) => {
-                    this.goals.push(goal);
-                });
-            });
+        this.loading = true;
+        this.beeminderService.fetchUser().subscribe(async (user: UserInterface) => {
+            for await (const name of user.goals) {
+                const goal = await this.beeminderService.fetchGoal(name).toPromise();
+                this.goals.push(goal);
+            }
+            this.loading = false;
+
+            // user.goals.forEach((name) => {
+            //     this.beeminderService.fetchGoal(name).subscribe((goal: GoalInterface) => {
+            //         this.goals.push(goal);
+            //     });
+            // });
         });
     }
 }

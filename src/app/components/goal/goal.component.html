@@ -1,8 +1,8 @@
 <div class="d-flex">
     <div class="mr-auto p-1">
         <div class="float-left">
-            <i [class]="goal.datapoints.length > 0 && goal.datapoints[0].value >= goal.dailyMin ? 'far fa-lightbulb success mr-3' : 'far fa-lightbulb danger mr-3'"></i>
-            {{goal.name}}
+            <i [class]="todayDatapoint.length === 1 && todayDatapoint[0].value >= goal.dailyMin ? 'far fa-lightbulb success mr-3' : 'far fa-lightbulb danger mr-3'"></i>
+        {{goal.name}}
         </div>
     </div>
     <ng-template [ngIf]="streak !== null">

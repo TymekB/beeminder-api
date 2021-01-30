@@ -85,7 +85,7 @@ export class BeeminderService {
         }));
     }
 
-    fetchGoal(name, timeframe): Observable<GoalInterface> {
+    fetchGoal(name, timeframe = null): Observable<GoalInterface> {
         return this.fetchGoalDatapoints(name, timeframe).pipe(switchMap((datapoints: any) => {
             return this.fetchGoalDailyMin(name).pipe(map((dailyMin) => {
                 return new GoalModel(name, datapoints, dailyMin);

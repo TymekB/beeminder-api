@@ -3,13 +3,14 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
 
-            <div *ngIf="goals.length > 0">
+            <div *ngIf="goals.length > 0 && !loading else elseBlock">
                 <ol class="list-group">
                     <li class="list-group-item" *ngFor="let goal of goals">
                         <app-goal [goal]="goal"></app-goal>
                     </li>
                 </ol>
             </div>
+            <ng-template #elseBlock>loading...</ng-template>
         </div>
     </div>
 </div>
