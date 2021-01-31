@@ -1,18 +1,20 @@
-<div class="container mt-5">
+<div class="container" style="margin-top: 8rem">
     <div class="row">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
 
-            <div *ngIf="goals.length > 0 && !loading else elseBlock">
-                <ol class="list-group">
+            <div *ngIf="goals.length > 0 && !isLoading">
+                <ol class="list-group habit-list">
                     <li class="list-group-item" *ngFor="let goal of goals">
                         <app-goal [goal]="goal"></app-goal>
                     </li>
                 </ol>
             </div>
-            <ng-template #elseBlock>loading...</ng-template>
         </div>
     </div>
+
 </div>
 
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-beat"
+             [fullScreen]="true"></ngx-spinner>
 

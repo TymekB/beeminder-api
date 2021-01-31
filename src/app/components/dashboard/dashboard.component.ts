@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BeeminderService} from "../../services/beeminder/beeminder.service";
 import {GoalInterface} from "../../interfaces/goal-interface";
 import {UserInterface} from "../../interfaces/user.interface";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
     selector: 'app-dashboard',
@@ -11,25 +12,22 @@ import {UserInterface} from "../../interfaces/user.interface";
 export class DashboardComponent implements OnInit {
 
     goals: GoalInterface[] = [];
-    loading: boolean = false;
+    isLoading: boolean = false;
 
-    constructor(private beeminderService: BeeminderService) {
+    constructor(private beeminderService: BeeminderService, private spinner: NgxSpinnerService) {
     }
 
     ngOnInit(): void {
-        this.loading = true;
+        this.isLoading = true;
+        this.spinner.show();
+
         this.beeminderService.fetchUser().subscribe(async (user: UserInterface) => {
             for await (const name of user.goals) {
                 const goal = await this.beeminderService.fetchGoal(name).toPromise();
                 this.goals.push(goal);
             }
-            this.loading = false;
-
-            // user.goals.forEach((name) => {
-            //     this.beeminderService.fetchGoal(name).subscribe((goal: GoalInterface) => {
-            //         this.goals.push(goal);
-            //     });
-            // });
+            this.isLoading = false;
+            this.spinner.hide();
         });
     }
 }

@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {BeeminderService} from "../../services/beeminder/beeminder.service";
 import * as moment from 'moment';
 import {GoalInterface} from "../../interfaces/goal-interface";
 import {DatapointInterface} from "../../interfaces/datapoint.interface";
@@ -15,7 +14,7 @@ export class GoalComponent implements OnInit {
     streak: number | null = null;
     todayDatapoint: DatapointInterface[] = [];
 
-    constructor(private beeminderService: BeeminderService) {
+    constructor() {
 
     }
 
