@@ -4,9 +4,9 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {map, switchMap} from "rxjs/operators";
 import {BeeminderDatapointInterface} from "../../interfaces/beeminder-datapoint.interface";
-import {DatapointInterface} from "../../interfaces/datapoint.interface";
+import {GoalDatapointInterface} from "../../interfaces/goal-datapoint.interface";
 import * as moment from "moment";
-import {GoalInterface} from "../../interfaces/goal-interface";
+import {GoalInterface} from "../../interfaces/goal.interface";
 import {BeeminderGoalInterface} from "../../interfaces/beeminder-goal.interface";
 import {DatapointModel} from "../../models/datapoint.model";
 import {GoalModel} from "../../models/goal.model";
@@ -38,17 +38,17 @@ export class BeeminderService {
         }));
     }
 
-    fetchGoalDatapoints(goal: string, timeframe: string | null = null): Observable<DatapointInterface[]> {
+    fetchGoalDatapoints(goal: string, timeframe: string | null = null): Observable<GoalDatapointInterface[]> {
         const url = `${environment.beeminderUrl}/users/me/goals/${goal}/datapoints.json?auth_token=${environment.beeminderAuthToken}`;
 
         return this.http.get(url).pipe(map((goals: BeeminderDatapointInterface[]): DatapointModel[] => {
 
-            let datapointsFormatted = goals.map<DatapointInterface>((goal: BeeminderDatapointInterface) => {
+            let datapointsFormatted = goals.map<GoalDatapointInterface>((goal: BeeminderDatapointInterface) => {
                 const date = goal.fulltext.match(new RegExp('[0-9]{4}-[A-z]{3}-[0-9]{2}'))[0];
 
                 return new DatapointModel(date, goal.value);
 
-            }).filter((v: DatapointInterface) => {
+            }).filter((v: GoalDatapointInterface) => {
                 if (timeframe === 'day' || timeframe === 'month' || timeframe === 'year') {
                     return moment(v.date).isSame(new Date(), timeframe);
                 }
@@ -61,16 +61,16 @@ export class BeeminderService {
 
             // makes datapoints array unique and sums the values
 
-            const uniqueDatapoints = datapointsFormatted.map<DatapointInterface>((goal: DatapointInterface) => {
+            const uniqueDatapoints = datapointsFormatted.map<GoalDatapointInterface>((goal: GoalDatapointInterface) => {
 
-                let reduced = datapointsFormatted.filter((v: DatapointInterface) => v.date == goal.date)
-                    .map((v: DatapointInterface) => v.value)
+                let reduced = datapointsFormatted.filter((v: GoalDatapointInterface) => v.date == goal.date)
+                    .map((v: GoalDatapointInterface) => v.value)
                     .reduce((total, amount) => total + amount);
 
                 return new DatapointModel(goal.date, reduced);
 
-            }).filter((value: DatapointInterface, index) => datapointsFormatted
-                .map((v: DatapointInterface) => v.date)
+            }).filter((value: GoalDatapointInterface, index) => datapointsFormatted
+                .map((v: GoalDatapointInterface) => v.date)
                 .indexOf(value.date) == index);
 
             // sorts datapoints from latest to oldest
@@ -79,7 +79,7 @@ export class BeeminderService {
                 return uniqueDatapoints;
             }
 
-            return uniqueDatapoints.sort((a: DatapointInterface, b: DatapointInterface) => {
+            return uniqueDatapoints.sort((a: GoalDatapointInterface, b: GoalDatapointInterface) => {
                 return new Date(b.date).getTime() - new Date(a.date).getTime();
             });
         }));

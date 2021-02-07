@@ -7,13 +7,15 @@ import {AppComponent} from './app.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {HttpClientModule} from '@angular/common/http';
 import {GoalComponent} from './components/goal/goal.component';
+import {StreakPipe} from "./streak.pipe";
 
 
 @NgModule({
     declarations: [
         AppComponent,
         DashboardComponent,
-        GoalComponent
+        GoalComponent,
+        StreakPipe
     ],
     imports: [
         BrowserModule,
@@ -21,7 +23,7 @@ import {GoalComponent} from './components/goal/goal.component';
         AppRoutingModule,
         NgxSpinnerModule
     ],
-    providers: [],
+    providers: [StreakPipe],
     bootstrap: [AppComponent]
 })
 export class AppModule {

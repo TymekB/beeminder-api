@@ -5,10 +5,8 @@
         {{goal.name}}
         </div>
     </div>
-    <ng-template [ngIf]="streak !== null">
-        <div class="p-1 streak"><img [class]="(streak === 0) ? 'streak-icon no-streak' : 'streak-icon'"
+        <div class="p-1 streak"><img [class]="((goal|streak) === 0) ? 'streak-icon no-streak' : 'streak-icon'"
                                      src="../../../assets/streak-icon.svg" alt="streak">
         </div>
-        <div class="p-1 streak">{{streak}}</div>
-    </ng-template>
+        <div class="p-1 streak">{{goal|streak}}</div>
 </div>

@@ -1,6 +1,6 @@
-import {DatapointInterface} from "../interfaces/datapoint.interface";
+import {GoalDatapointInterface} from "../interfaces/goal-datapoint.interface";
 
-export class DatapointModel implements DatapointInterface {
+export class DatapointModel implements GoalDatapointInterface {
 
     constructor(readonly date: string, readonly value: number) {
     }

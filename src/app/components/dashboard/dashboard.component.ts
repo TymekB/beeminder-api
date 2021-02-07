@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BeeminderService} from "../../services/beeminder/beeminder.service";
-import {GoalInterface} from "../../interfaces/goal-interface";
+import {GoalInterface} from "../../interfaces/goal.interface";
 import {UserInterface} from "../../interfaces/user.interface";
 import {NgxSpinnerService} from "ngx-spinner";
 

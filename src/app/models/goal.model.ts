@@ -1,8 +1,8 @@
-import {GoalInterface} from "../interfaces/goal-interface";
-import {DatapointInterface} from "../interfaces/datapoint.interface";
+import {GoalInterface} from "../interfaces/goal.interface";
+import {GoalDatapointInterface} from "../interfaces/goal-datapoint.interface";
 
 export class GoalModel implements GoalInterface {
 
-    constructor(readonly name: string, public datapoints: DatapointInterface[], public dailyMin: number) {
+    constructor(readonly name: string, public datapoints: GoalDatapointInterface[], public dailyMin: number) {
     }
 }
